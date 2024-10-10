@@ -82,6 +82,14 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
+   addresses: [addressSchema],
+   wishlist : [wishlistItemSchema],
+   user_wallet : {
+    type: Number,
+    required :true,
+    default:0
+   },
+   walletHistory : [walletHistorySchema]
 
 },{
     timestamps:true
