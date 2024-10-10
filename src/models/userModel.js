@@ -1,5 +1,38 @@
 import mongoose from "mongoose"
 
+const addressSchema = new mongoose.Schema({
+    state:String,
+    city:String,
+    pincode:String,
+    landmark:String,
+    fullAddress:String,
+    isDefault:{
+        type:Boolean,
+        default:false
+    }
+})
+
+const wishlistItemSchema = new mongoose.Schema({
+    product:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Product"
+    }
+})
+
+const walletHistorySchema = new mongoose.Schema({
+    amount:{
+        type:Number,
+    },
+    status:{
+        type: String,
+        enum:["Debit","Credit"]
+    },
+    time:{
+        type:Date,
+        default:Date.now
+    }
+})
+
 const userSchema = new mongoose.Schema({
     username:{
         type:String,
@@ -49,6 +82,7 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
+
 },{
     timestamps:true
 }
