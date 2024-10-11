@@ -95,4 +95,14 @@ const userSchema = new mongoose.Schema({
     timestamps:true
 }
 
-)
+);
+
+userSchema.methods.toJSON = function (){
+    const user = this.toObject();
+    delete user.otp;
+    return user;
+}
+
+const User = mongoose.model("User", userSchema)
+
+export default User
