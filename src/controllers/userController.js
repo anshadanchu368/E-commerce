@@ -1,23 +1,28 @@
 import User from "../models/userModel.js"
 import {ApiError} from "../utils/ApiError.js"
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken";
 
 
-const generateAccessAndRefereshTokens = async(userId)=>{
-     try{
-          const user = await User.findById(userId)
 
-          const accessToken = user.generateAccessToken()
-          const refreshToken = user.generateRefreshToken()
+const generateAccessAndRefereshTokens = async (userId) => {
+    try {
+        const user = await User.findById(userId)
 
-          await user.save({validateBeforeSave:false})
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
 
-          return {accessToken, refreshToken}
+        await user.save({ validateBeforeSave: false })
+
+        return { accessToken, refreshToken }
 
 
-     }catch(error){
-        throw new ApiError(500."something went wrong while generating refreshh and access token")
-     }
+    } catch (error) {
+        throw new ApiError(500, error.message || "something went wrong while generating refreshh and access token")
+    }
 }
+
 
 const registerUser = asyncHandler( async (req,res)=>{
 
@@ -128,7 +133,7 @@ const logoutUser = asyncHandler(async(req,res)=>{
         .json(new ApiResponse(200, null, "User logged out successfully"))
 })
 
-const refreshAccessToken = asyncHandler(async (req,res){
+const refreshAccessToken = asyncHandler(async (req,res)=>{
 
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshAccessToken
 
@@ -168,4 +173,27 @@ const refreshAccessToken = asyncHandler(async (req,res){
     }
 
    
+})
+
+
+const changePassword =asyncHandler(async(req,res)=>{
+
+    const {oldPassord, newPassword}= req.body 
+
+    const user = await User.findById(req.user?.id)
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassord)
+
+
+    
+    if (!isPasswordCorrect) {
+        throw new ApiError(400, "Invalid old password")
+    }
+
+    user.password = newPassword
+
+    await user.save({validateBeforeSave:false})
+
+    return res
+     .status(200)
+     .json(new ApiResponse(200 , {}. "Password changed succesfully"))
 })
