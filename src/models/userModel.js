@@ -56,6 +56,9 @@ const userSchema = new mongoose.Schema({
         type:boolean,
         default:false
     },
+    refreshToken:{
+         type:String,
+    },
     otp:{
         type:String,
         default:null
